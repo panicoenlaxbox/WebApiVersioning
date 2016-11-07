@@ -22,7 +22,6 @@ namespace WebApiVersioning
             //);
             //config.Services.Replace(typeof(IHttpControllerSelector), new NamespaceHttpControllerSelector(config));
 
-            //config.Services.Replace(typeof(IHttpControllerSelector), new MyHttpControllerSelector(config));
 
             config.MapHttpAttributeRoutes();
             config.Routes.MapHttpRoute(

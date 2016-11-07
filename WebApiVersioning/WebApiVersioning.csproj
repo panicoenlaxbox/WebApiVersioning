@@ -85,7 +85,6 @@
     <Compile Include="Models\Customer2.cs" />
     <Compile Include="Models\Customer3.cs" />
     <Compile Include="Models\Order.cs" />
-    <Compile Include="MyHttpControllerSelector.cs" />
     <Compile Include="NamespaceHttpControllerSelector.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
