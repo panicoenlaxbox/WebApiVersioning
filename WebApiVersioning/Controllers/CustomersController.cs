@@ -24,7 +24,7 @@ namespace WebApiVersioning.Controllers
             };
         }
 
-        [VersionedRoute("api/Customers2", 2)]
+        [VersionedRoute("api/Customers", 2)]
         public IEnumerable<Customer2> GetCustomers2()
         {
             return new List<Customer2>()
@@ -38,6 +38,24 @@ namespace WebApiVersioning.Controllers
                 {
                     Id = 2,
                     Name = "Customer name 2 v2"
+                }
+            };
+        }
+
+        [VersionedRoute("api/Customers")]
+        public IEnumerable<Customer3> GetCustomers3()
+        {
+            return new List<Customer3>()
+            {
+                new Customer3()
+                {
+                    Id = 1,
+                    Name = "Customer name 1 v3"
+                },
+                new Customer3()
+                {
+                    Id = 2,
+                    Name = "Customer name 2 v3"
                 }
             };
         }

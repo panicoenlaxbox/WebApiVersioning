@@ -79,10 +79,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrdersControllers.cs" />
     <Compile Include="Controllers\CustomersController.cs" />
     <Compile Include="Models\Customer.cs" />
     <Compile Include="Models\Customer2.cs" />
+    <Compile Include="Models\Customer3.cs" />
+    <Compile Include="Models\Order.cs" />
     <Compile Include="MyHttpControllerSelector.cs" />
     <Compile Include="NamespaceHttpControllerSelector.cs" />
     <Compile Include="Program.cs" />
@@ -93,6 +95,8 @@
     <Compile Include="TypeExtensions.cs" />
     <Compile Include="VersionConstraint.cs" />
     <Compile Include="VersionedRoute.cs" />
+    <Compile Include="FallbackRoute.cs" />
+    <Compile Include="Versioning.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

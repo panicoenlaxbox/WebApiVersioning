@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Web.Http.Routing;
 
 namespace WebApiVersioning
-{    
+{
     class VersionConstraint : IHttpRouteConstraint
     {
         private readonly int _allowedVersion;
@@ -17,29 +17,35 @@ namespace WebApiVersioning
             _defaultVersion = defaultVersion;
         }
 
+        private int? GetVersion(HttpRequestMessage request)
+        {
+            var version = GetVersionFromQueryString(request);
+            if (version != null)
+            {
+                return version;
+            }
+            version = GetVersionFromHeaders(request);
+            if (version != null)
+            {
+                return version;
+            }
+            version = GetVersionFromAcceptHeader(request);
+            if (version != null)
+            {
+                return version;
+            }
+            return GetVersionFromCustomAcceptHeader(request) ?? _defaultVersion;
+        }
+
         public bool Match(HttpRequestMessage request, IHttpRoute route, string parameterName, IDictionary<string, object> values, HttpRouteDirection routeDirection)
         {
             if (routeDirection != HttpRouteDirection.UriResolution)
             {
                 return false;
             }
-            var version = GetVersionFromQueryString(request);
-            if (version != null)
-            {
-                return version == _allowedVersion;
-            }
-            version = GetVersionFromHeaders(request);
-            if (version != null)
-            {
-                return version == _allowedVersion;
-            }
-            version = GetVersionFromAcceptHeader(request);
-            if (version != null)
-            {
-                return version == _allowedVersion;
-            }
-            version = GetVersionFromCustomAcceptHeader(request) ?? _defaultVersion;
-            return version == _allowedVersion;
+            var version = GetVersion(request) ?? _defaultVersion;
+            var fallbackRoute = Versioning.GetFallbackRoute(route.RouteTemplate, _allowedVersion);
+            return version == _allowedVersion || (fallbackRoute != null && fallbackRoute.HasFallbackVersion(version));
         }
 
         private static int? GetVersionFromCustomAcceptHeader(HttpRequestMessage request)
@@ -85,7 +91,6 @@ namespace WebApiVersioning
             }
             return null;
         }
-
 
         private static int? GetVersionFromQueryString(HttpRequestMessage request)
         {

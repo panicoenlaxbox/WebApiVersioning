@@ -5,9 +5,7 @@ namespace WebApiVersioning
 {
     class VersionedRoute : RouteFactoryAttribute
     {
-        private readonly int _allowedVersion;
-        private const int DefaultVersion = 1;
-        private string _template;
+        private const int DefaultVersion = Versioning.Current;
 
         public VersionedRoute(string template)
          : this(template, DefaultVersion)
@@ -17,13 +15,14 @@ namespace WebApiVersioning
         public VersionedRoute(string template, int allowedVersion)
             : base(template)
         {
-            _template = template;
-            _allowedVersion = allowedVersion;
+            AllowedVersion = allowedVersion;
         }
+
+        public int AllowedVersion { get; }
 
         public override IDictionary<string, object> Constraints => new HttpRouteValueDictionary
         {
-            { "version", new VersionConstraint(_allowedVersion, DefaultVersion) }
+            { "version", new VersionConstraint(AllowedVersion, DefaultVersion) }
         };
     }
 }

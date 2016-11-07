@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System;
+using System.Net.Http.Headers;
 using System.Web.Http;
 using Owin;
 using WebApiVersioning.Models;
@@ -7,6 +8,7 @@ namespace WebApiVersioning
 {
     class Startup
     {
+        
         public void Configuration(IAppBuilder app)
         {
             app.UseWelcomePage("/welcome");
@@ -48,8 +50,5 @@ namespace WebApiVersioning
             //    new MediaTypeHeaderValue("application/vnd.example.com.customer+json")));
             app.UseWebApi(config);
         }
-
-
-
     }
 }
