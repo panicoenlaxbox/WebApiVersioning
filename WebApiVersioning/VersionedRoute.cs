@@ -5,7 +5,7 @@ namespace WebApiVersioning
 {
     class VersionedRoute : RouteFactoryAttribute
     {
-        private const int DefaultVersion = Versioning.Current;
+        private const int DefaultVersion = Versioning.CurrentVersion;
 
         public VersionedRoute(string template)
          : this(template, DefaultVersion)

@@ -7,7 +7,7 @@ namespace WebApiVersioning
 {
     internal class Versioning
     {
-        public const int Current = 3;
+        public const int CurrentVersion = 3;
         public static Lazy<IEnumerable<FallbackRoute>> FallbackRoutes;
 
         static Versioning()
@@ -23,25 +23,21 @@ namespace WebApiVersioning
                 .Select(m =>
                 {
                     var route = m.GetCustomAttribute<VersionedRoute>();
-                    return new FallbackRoute
-                    {
-                        RouteTemplate = route.Template,
-                        AllowedVersion = route.AllowedVersion,
-                        FallbackVersions = new List<int>()
-                    };
+                    return new FallbackRoute(route.Template, route.AllowedVersion)
+;
                 }).ToList();
             foreach (var routeTemplate in fallbackRoutes.Select(p => p.RouteTemplate).Distinct())
             {
                 var lastFallbackRouteIndexFound = 0;
-                for (var version = Current; version > 0; version--)
+                for (var version = CurrentVersion; version > 0; version--)
                 {
                     if (fallbackRoutes.Any(MatchFallbackRoute(routeTemplate, version)))
                     {
                         lastFallbackRouteIndexFound = version;
                         continue;
                     }
-                    ((IList<int>)fallbackRoutes.Single(MatchFallbackRoute(routeTemplate, lastFallbackRouteIndexFound)).FallbackVersions).Add(
-                        version);
+                    fallbackRoutes.Single(MatchFallbackRoute(routeTemplate, lastFallbackRouteIndexFound))
+                        .AddFallbackVersion(version);
                 }
             }
             return fallbackRoutes;
@@ -54,7 +50,7 @@ namespace WebApiVersioning
 
         public static FallbackRoute GetFallbackRoute(string routeTemplate, int allowedVersion)
         {
-            return FallbackRoutes.Value.SingleOrDefault(f => f.RouteTemplate == routeTemplate && f.AllowedVersion == allowedVersion);
+            return FallbackRoutes.Value.SingleOrDefault(MatchFallbackRoute(routeTemplate, allowedVersion));
         }
     }
 }
