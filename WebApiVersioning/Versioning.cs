@@ -8,7 +8,7 @@ namespace WebApiVersioning
     internal class Versioning
     {
         public const int CurrentVersion = 3;
-        public static Lazy<IEnumerable<FallbackRoute>> FallbackRoutes;
+        public static readonly Lazy<IEnumerable<FallbackRoute>> FallbackRoutes;
 
         static Versioning()
         {
@@ -17,15 +17,7 @@ namespace WebApiVersioning
 
         private static IEnumerable<FallbackRoute> GetFallbackRoutes()
         {
-            var fallbackRoutes = Assembly.GetExecutingAssembly().GetTypes()
-                .SelectMany(t => t.GetMethods())
-                .Where(m => m.GetCustomAttributes(typeof(VersionedRoute), false).Length > 0)
-                .Select(m =>
-                {
-                    var route = m.GetCustomAttribute<VersionedRoute>();
-                    return new FallbackRoute(route.Template, route.AllowedVersion)
-;
-                }).ToList();
+            var fallbackRoutes = GetFallbackRoutesFromVersionedRoutes();
             foreach (var routeTemplate in fallbackRoutes.Select(p => p.RouteTemplate).Distinct())
             {
                 var lastFallbackRouteIndexFound = 0;
@@ -43,9 +35,22 @@ namespace WebApiVersioning
             return fallbackRoutes;
         }
 
+        private static IEnumerable<FallbackRoute> GetFallbackRoutesFromVersionedRoutes()
+        {
+            return Assembly.GetExecutingAssembly().GetTypes()
+                .SelectMany(t => t.GetMethods())
+                .Where(m => m.GetCustomAttributes(typeof(VersionedRoute), false).Length > 0)
+                .Select(m =>
+                {
+                    var route = m.GetCustomAttribute<VersionedRoute>();
+                    return new FallbackRoute(route.Template, route.AllowedVersion)
+                        ;
+                }).ToList();
+        }
+
         private static Func<FallbackRoute, bool> MatchFallbackRoute(string routeTemplate, int allowedVersion)
         {
-            return f => f.RouteTemplate == routeTemplate && f.AllowedVersion == allowedVersion;
+            return f => (f.RouteTemplate == routeTemplate) && (f.AllowedVersion == allowedVersion);
         }
 
         public static FallbackRoute GetFallbackRoute(string routeTemplate, int allowedVersion)
